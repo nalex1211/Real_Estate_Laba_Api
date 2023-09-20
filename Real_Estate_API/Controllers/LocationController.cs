@@ -60,21 +60,8 @@ namespace Real_Estate_API.Controllers
 
             _context.Entry(location).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LocationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
+
 
             return NoContent();
         }
@@ -104,7 +91,7 @@ namespace Real_Estate_API.Controllers
             {
                 City = location.City,
                 State = location.State,
-                Street= location.Street,
+                Street = location.Street,
             };
 
             return Ok(locationResponse);
