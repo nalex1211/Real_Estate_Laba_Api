@@ -128,7 +128,7 @@ namespace Real_Estate_API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var agentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var agentId = "dfgsdfg";
             var location = new Location
             {
                 Country = propertyDto.Country,
