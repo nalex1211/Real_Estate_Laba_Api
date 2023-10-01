@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
 using Real_Estate_API.Data;
 using Real_Estate_API.Dto;
@@ -21,6 +23,12 @@ namespace Real_Estate_API.Controllers
         public PropertyController(ApplicationDbContext context)
         {
             _context = context;
+        }
+        [HttpGet("odata/Properties")]
+        [EnableQuery]
+        public IActionResult GetProperties()
+        {
+            return Ok(_context.Properties);
         }
 
         [HttpGet]

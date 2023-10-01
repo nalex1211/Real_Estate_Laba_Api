@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "5366fe2d-9a02-45b0-afee-60f603864a24",
+		"name": "Api_Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "28439968"
+	},
+	"item": [
+		{
+			"name": "Get_Req",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://localhost:44323/api/Location"
+			},
+			"response": []
+		},
+		{
+			"name": "Post_Req",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Response status code is 201\", function () {",
+							"  pm.expect(pm.response.code).to.equal(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"The id field is a non-zero integer\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.id).to.be.a('number').and.to.be.above(0);",
+							"});",
+							"",
+							"",
+							"pm.test(\"The status field is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.status).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"The type field is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.type).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"The bedroomCount field is a non-negative integer\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.bedroomCount).to.be.a('number');",
+							"  pm.expect(responseData.bedroomCount).to.be.at.least(0);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Country",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "City",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "State",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "Street",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "Status",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "Type",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "BedroomCount",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "BathroomCount",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "Price",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "Area",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "ImageFile",
+							"type": "file",
+							"src": "/D:/958f9542-69f2-4a62-a2ab-a920a0e94041.jpg"
+						}
+					]
+				},
+				"url": "https://localhost:44323/api/Property"
+			},
+			"response": []
+		}
+	]
+}

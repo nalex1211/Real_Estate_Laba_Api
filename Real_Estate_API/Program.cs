@@ -1,17 +1,23 @@
+using Microsoft.AspNetCore.OData;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Real_Estate_API.Data;
 using Real_Estate_API.Helpers;
 using Real_Estate_API.Models;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddOData(opts => opts.AddRouteComponents("odata", GetEdmModel())
+    .Count().Filter().OrderBy().Expand().Select()
+);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient<Api_Service>();
+
 builder.Services.AddIdentity<Agent, IdentityRole>(options =>
 {
     options.Password.RequireNonAlphanumeric = false;
@@ -38,11 +44,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseRouting();  
 
-app.UseHttpsRedirection();
+app.UseAuthentication();  
+app.UseAuthorization();   
 
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
+IEdmModel GetEdmModel()
+{
+    var edmBuilder = new ODataConventionModelBuilder();
+    edmBuilder.EntitySet<Property>("Properties");
+    return edmBuilder.GetEdmModel();
+}
