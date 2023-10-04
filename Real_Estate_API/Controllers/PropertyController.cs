@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Real_Estate_API.Data;
 using Real_Estate_API.Dto;
 using Real_Estate_API.Models;
@@ -19,10 +22,12 @@ namespace Real_Estate_API.Controllers
     public class PropertyController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IDistributedCache _cache;
 
-        public PropertyController(ApplicationDbContext context)
+        public PropertyController(ApplicationDbContext context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
         [HttpGet("odata/Properties")]
         [EnableQuery]
@@ -32,6 +37,7 @@ namespace Real_Estate_API.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetAllProperties()
         {
             var properties = await _context.Properties
@@ -60,7 +66,30 @@ namespace Real_Estate_API.Controllers
 
             return Ok(properties);
         }
+        [HttpGet("RedisUse")]
+        public async Task<IActionResult> GetAllPropertiesRedis()
+        {
+            var cacheKey = "all-properties";
+            string serializedProperties;
 
+            var encodedProperties = await _cache.GetAsync(cacheKey);
+
+            if (encodedProperties != null)
+            {
+                serializedProperties = Encoding.UTF8.GetString(encodedProperties);
+                return Ok(JsonConvert.DeserializeObject<IEnumerable<Property>>(serializedProperties));
+            }
+
+            var properties = await _context.Properties.ToListAsync();
+
+            serializedProperties = JsonConvert.SerializeObject(properties);
+            await _cache.SetAsync(cacheKey, Encoding.UTF8.GetBytes(serializedProperties), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60) // Cache for 60 minutes
+            });
+
+            return Ok(properties);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProperty(int id)

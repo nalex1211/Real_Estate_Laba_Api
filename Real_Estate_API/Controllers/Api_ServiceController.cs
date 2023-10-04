@@ -14,6 +14,7 @@ public class Api_ServiceController : ControllerBase
         _service = service;
     }
     [HttpGet("city")]
+    [ResponseCache(Duration = 60)]
     public async Task<IActionResult> GetPropertyList(string city)
     {
         var properties = await _service.GetPropertyData(city);

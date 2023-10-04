@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers().AddOData(opts => opts.AddRouteComponents("odata", GetEdmModel())
-    .Count().Filter().OrderBy().Expand().Select()
+    .Count().Filter().OrderBy().Expand().Select().SetMaxTop(100)
 );
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -35,6 +35,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+});
+builder.Services.AddMemoryCache();
+builder.Services.AddResponseCaching();
 
 var app = builder.Build();
 
@@ -44,8 +50,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseRouting();  
-
+app.UseRouting();
+app.UseResponseCaching();
 app.UseAuthentication();  
 app.UseAuthorization();   
 
